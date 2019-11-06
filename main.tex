@@ -10,10 +10,36 @@
 \maketitle
 \section{Introduction}
 
-\begin{itemize}
-    \item Why do people need phylogenies?
-    \item What unique stuff does RevBayes bring to phylogenetic research? 
-\end{itemize}
+Estimating phylogenetic trees has emerged as one of the predominant challenges in comparative biology and paleontology.
+Phylogenetic trees provide us with the historical context in which traits and organisms evolved.
+There is abundant evidence that trying to understand trait evolution without a phylogenetic tree is deeply misleading (cite a bunch of stuff here).
+In particular, paleontological data are crucially important in comparative analyses (cite Slater and others).
+As such, inclusion of paleontological data is being used in a wider variety of types of studies, and across more disciplines.
+
+Despite the important role fossils play in phylogenetic inference, adoption of model-based method (such as maximum likelihood and Bayesian analyses) has been sluggish in the geosciences.
+For many years, the only published Bayesian model was the Mk model (Lewis), an extremely simple model of evolution based on the Jukes-Cantor model of sequence evolution.
+Methods became available to relax the models' restrictive assumptions through the use of Bayesian priors.
+At the same time, methods for working with continuous trait data, and for incorporating fossils more completely in divergence time estimation have been published.
+
+Many of these new methods are quite complex, modeling aspects of a project that may be hierarchical, and in which submodels may have complex dependencies on one another.
+Historically, users of a phylogenetics software have been able to choose from a set of  models that the developers implemented.
+Extending a model may or may not be possible, depending on how the software was coded. 
+Additionally, many software packages have default values on parameters or priors in a model, which reduces the transparency of an analysis.
+This type of project organization, in which the researcher is reliant on the computational scientists to do their work is inefficient.
+
+The phylogenetics software RevBayes represents an attempt to reconfigure the way phylogenetics software is written.
+RevBayes implements a statistical computing language, similar to R, called Rev.
+Rev implements a large variety of probability distributions, as well as mathematical operations, such as Markov Chain Monte Carlo analysis.
+Using Rev, an infinite combinations of models, priors and data can be assembled into analysis workflows.
+A researcher who has a new idea to analyse their data, then, does not have to wait for a developer to implement their idea.
+Likewise, assembling a model from all of its constituent pieces means there are no defaults, enabling a radical transparency in phylogenetic analysis. 
+
+At the same time, asking researchers and students to learn a new programming language means asking them to take on a large cognitive load.
+RevBayes can be used in a variety of ways: an RStudio interface, Jupyter Notebook, or the command line.
+This manuscript will discuss techniques for teaching with RevBayes in a classroom or workshop context, with special attention paid to when and how to make use of the different interfaces.
+
+
+
 
 \section{The Context of Systematics Education}
 
