@@ -1,5 +1,6 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage{natbib}
 
 \title{reverse}
 \author{wright.aprilm }
@@ -11,23 +12,24 @@
 \section{Introduction}
 
 Estimating phylogenetic trees has emerged as one of the predominant challenges in comparative biology and paleontology.
-Phylogenetic trees provide us with the historical context in which traits and organisms evolved.
-There is abundant evidence that trying to understand trait evolution without a phylogenetic tree is deeply misleading (cite a bunch of stuff here).
-In particular, paleontological data are crucially important in comparative analyses (cite Slater and others).
+Phylogenetic trees provide researchers with the historical context in which traits and organisms evolved.
+There is abundant evidence that trying to understand trait evolution without a phylogenetic tree is deeply misleading \cite{felsenstein1985, uyeda2018}.
+In particular, paleontological data are crucially important in comparative analyses \citep{rabosky2010, slater2012}.
 As such, inclusion of paleontological data is being used in a wider variety of types of studies, and across more disciplines.
 
 Despite the important role fossils play in phylogenetic inference, adoption of model-based method (such as maximum likelihood and Bayesian analyses) has been sluggish in the geosciences.
-For many years, the only published Bayesian model was the Mk model (Lewis), an extremely simple model of evolution based on the Jukes-Cantor model of sequence evolution.
-Methods became available to relax the models' restrictive assumptions through the use of Bayesian priors.
-At the same time, methods for working with continuous trait data, and for incorporating fossils more completely in divergence time estimation have been published.
+For many years, the only published Bayesian model was the Mk model \citep{Lewis2001}, an extremely simple model of evolution based on the Jukes-Cantor model of sequence evolution \citep{Jukes1969}.
+Methods became available to relax the models' restrictive assumptions through the use of Bayesian priors \citep{Nylander2004}, and these methods have been rigorously tested \citep{Wright2016}.
+At the same time, methods for working with continuous trait data \citep{parins2018}, for incorporating fossils more completely in divergence time estimation \citep{Stadler2010, Heath2014}, and sophisticated comparative methods \citep{Beaulieu2013, Rabosky2015, Beaulieu2016, Hoehna2019, zenil2019},  have been published.
 
 Many of these new methods are quite complex, modeling aspects of a project that may be hierarchical, and in which submodels may have complex dependencies on one another.
+See Wright and Warnock in this issue for an in-depth explanation of hierarchical models.
 Historically, users of a phylogenetics software have been able to choose from a set of  models that the developers implemented.
 Extending a model may or may not be possible, depending on how the software was coded. 
 Additionally, many software packages have default values on parameters or priors in a model, which reduces the transparency of an analysis.
 This type of project organization, in which the researcher is reliant on the computational scientists to do their work is inefficient.
 
-The phylogenetics software RevBayes represents an attempt to reconfigure the way phylogenetics software is written.
+The phylogenetics software RevBayes \citep{Hoehna2014b, Hoehna2016a} represents an attempt to reconfigure the way phylogenetics software is written.
 RevBayes implements a statistical computing language, similar to R, called Rev.
 Rev implements a large variety of probability distributions, as well as mathematical operations, such as Markov Chain Monte Carlo analysis.
 Using Rev, an infinite combinations of models, priors and data can be assembled into analysis workflows.
@@ -35,37 +37,134 @@ A researcher who has a new idea to analyse their data, then, does not have to wa
 Likewise, assembling a model from all of its constituent pieces means there are no defaults, enabling a radical transparency in phylogenetic analysis. 
 
 At the same time, asking researchers and students to learn a new programming language means asking them to take on a large cognitive load.
-RevBayes can be used in a variety of ways: an RStudio interface, Jupyter Notebook, or the command line.
+RevBayes can be used in a variety of ways: an RStudio interface \citep{Rstudio}, Jupyter Notebook \citep{jupyter}, or the command line.
 This manuscript will discuss techniques for teaching with RevBayes in a classroom or workshop context, with special attention paid to when and how to make use of the different interfaces.
-
-
-
 
 \section{The Context of Systematics Education}
 
-\begin{itemize}
-    \item i.e., why do we even need a GUI
-    \item Some biology disciplines routinely use server and command-line interfaces
-    \item This is less common in others
-    \item In courses where the content, not the code, is the focus, GUIs more common.
-    \item Not uncommon to have courses with multiple skill levels among learners
-    \item RevBayes relatively high cognitive load
-    \item Python is more common in large data \& bioinformatics
-    \item R more common in paleo \& comparative biology
-\end{itemize}
+The transparency of RevBayes enables researchers to try any model they can imagine.
+But this flexibility comes at the cost of a high learning curve for the software. 
+In many respects, teaching researchers to use RevBayes looks much more like teaching computation and programming than teaching the use of a single program or set of programs.
+Despite the prevalence of big data in science, and extensive use of scientific software in nearly all aspects of biology paleobiology, the integration of programming as a skill is still quite loose \citep{sayres2018}.
+Therefore, when teaching RevBayes, the instructor is not simply teaching systematics concepts, but often teaching programming alongside the concepts.
+This manner of instruction is often referred to as "code to learn" - the programming knowledge is not the main skill.
+It is a skill developed in support of the primary goal of learning systematics.
 
-\section{RevStudio}
+This is a tricky task for the classroom or workshop instructor: to teach systematics, the intricacies of a software, and a programming language, all to learners who might have variable levels of comfort with any of those topics.
+In support of instructors using RevBayes in the classroom, we have developed three ways of interacting with RevBayes.
+The first is the standard command-line interface.
+Command line proficiency is fairly common in many areas of biology, particularly areas of biology in which remote server use is common.
+We also have a Jupyter interface.
+Project Jupyter is an open source group that maintains several interfaces to the Python programming language.
+Running RevBayes in a Jupyter interface enables multi-language workflows, and for notes and images to be embedded in a notebook with code.
+Finally, we have recently developed a RStudio interface for RevBayes. 
+In this interface, Rev code can be run interactively in the RStudio graphical interface.
 
-How does this work?  
-How can this tool be used in making websites, manuals, etc == interoperability
+Each of these interfaces can be used locally (on user's personal computers) or on a server.
+This offers instructors flexibility to meet learner challenges, such as lacking install permissions on their computer, or not possessing a personal computer.
+These interfaces can also accommodate the cultures of different subfields.
+For example, Python is more common in genomic and bioinformatic fields.
+R tends to be common in comparative biology, ecology, and evolution. 
+Having multiple interfaces puts the instructor in charge of deciding how they can most comfortably and effectively teach with Rev.
+In the following sections, we will discuss the operation and technical details of each of these interfaces.
+
+\section{Command-Line Interface}
+
+Command-line interfaces are among the more common ways to interact with servers, such as high-performance cluster computers.
+In fields where large datasets or long computations are the norm, command-line interface software is very popular, as it can be easily run on a local machine, or on a server.
+In these fields, such as genomics or bioinformatics, the command-line interface may be the most appropriate way to teach learners how to use RevBayes.
+Use of the command-line interface frees the instructor up to either have learners use their personal computers, or they can install RevBayes on a server or cloud computer.
+
+The command-line interface is the default interface of RevBayes, and is installed automatically when the software is downloaded.
+The interface can be used interactively; i.e., by entering commands directly.
+It can also be used in batch mode, such as by writing commands into a script file, and passing that file to RevBayes.
+
+\section{RevKnitr}
+
+RevBayes also has an RStudio implementation. 
+RStudio is a common way to interact with the R statistical programming language.
+While R is a cross-disciplinary language, it is especially common in population biology, comparative biology, and paleobiology.
+In these fields, the R language, upon which Rev is based, and the RStudio interface are likely to be familiar to learners.
+
+The RevKnitr interface is implemented via the R Package Knitr. 
+Knitr is used to generate interactive reports and websites.
+The Rev Knitr engine allows learners to run RevBayes interactively in an RStudio window.
+It does this by creating a cache directory and writing the Rev code to this directory. 
+When a user runs a markdown chunk, that code is written to a script. 
+The engine then executes the code at the command line.
+Each chunk is appended to the growing script.
+R and Rev can both be used in the RevKnitr interface.
+
+Rev can also be used to generate interactive reports and websites via Knitr.
+The R ecosystem has extensive package infrastructure for creating websites from Markdown documents (pkgdown, blogdown), and for preparing custom books from sets of tutorials (bookdown).
+The RevKnitr interface is compatible with all of these tools.
 
 \section{RevNotebook}
 
-How does this work? 
+The RevNotebook is a Jupyter interface for RevBayes.
+Project Jupyter started as a Python interface called the iPython Notebook, but now incorporates many different languages. 
+These interfaces are common in various areas of biological data science, particularly genomics, bioinformatics, and evolution.
+To use this interface, the researcher needs to compile the RevBayes executable for use with the Jupyter kernel.
+Jupyter then directly executes RevBayes and returns the output to the Jupyter interface.
+Rev can be used concurrently in the same notebook with any of the other Jupyter supported languages.
+
+Much like RStudio, Jupyter has a robust infrastructure for online publishing and document preparation.
+For example, ReadTheDocs is a common website for hosting websites and course resources.
+Tutorials can be assembled into books via JupyterBook.
 
 \section{A Comparison of the three interfaces}
 
-When I use which?
+The three interfaces allow for very different types of interactions with the Rev language and with the analyses possible in RevBayes.
+When designing a systematics class, what interface should one choose?
+\cite{wright2019} defined 3 core concepts for instructors to choose how to teach computational material: \textit{consistency}, \textit{current status of research tools}, and \textit{comfort}. 
+These refer to being aware of what tools are taught in other classes (\textit{consistency}), using tools that are in use by other researchers in the field (\textit{current status of research tools}), and being cognisant of your own \textit{comfort} as the instructor.
+
+\subsection{Consistency}
+The availability of multiple interfaces also allows Rev to be scaffolded in to existing curricula related to computation.
+Prior research demonstrates that working with fewer languages more consistently can help learners retain the fundamentals of coding skills better \citep{guzman2019, wu1990}.
+Having interfaces to popular coding tools, such as the Jupyter Notebook and RStudio, means that learners can continue to use familiar frameworks as they build their systematics skills via RevBayes and the Rev language.
+If most of the computational curriculum is taught in R or Python, the best way to teach Rev may be using the tools associated with that language.
+
+For example, the R statistical programming language is very common in ecology, comparative biology, and paleontology. 
+If this is the audience for a course, it might make more sense to use Rev in the RStudio interface. 
+By contrast, many tools for genomics and bioinformatics are written in Python, and accessing remote servers is fairly common.
+In a course oriented toward phylogenomics, using the Jupyter or command-line interfaces may make more sense.
+
+\subsubsection{Equity and Inclusion in the Systematics Classroom}
+
+One component of consistency is equity and inclusion: how are vulnerable students enabled to engage in this learning? 
+Many analyses in systematics and phylogenetics can be long-running, or require larger memory than a student's computer can provide.
+This is particularly an issue for low-income students and students from developing nations (Wright et al. 2019).
+All three of the interfaces described in this manuscript can be used with cloud-based computing technology, allowing students to operate the software from any computer.
+Wright et al. (2019) describe how RStudio Server, JupyterHub, and other cloud technology can be leveraged to enable to ensure that no student's participation in computational biology is limited by the computer they can afford.
+Any server or cloud computer with a command-line interface can be used to set up the three RevBayes interfaces, enabling instructors to continue serving students from low-income backgrounds.
+
+\subsection{Current Status of Research Tools}
+
+Another consideration is the current status of research tools.
+When the students leave a systematics class, in what language will the tools they work with be written? 
+Many phylogenetic comparative methods are written in R. 
+However, many genomic tools are written in Python. 
+If you are unfamiliar with the needs of learners in the classroom, it may be prudent to do a pre-course survey of them. 
+This way, you could ask what their needs are, and request example papers so that you can evaluate the types of tools being used in the disciplines from which the learners are coming.
+In this way, learners can be prepared not just to learn systematics, but to learn how to use systematics in pursuit of their research questions. 
+
+
+\subsection{Comfort}
+
+The previous two sections have emphasized the needs of the learner. 
+However, instructor comfort is one of the largest barriers to adoption of computational work in the classroom.
+Having access to multiple interfaces enables an instructor to choose the one in which they are most comfortable and experienced.
+
+\section{Conclusion}
+
+In this manuscript, we have introduced the three interfaces to RevBayes: command line, Jupyter, and RStudio. 
+We have also given an overview of the general principles that should underly choice of interface in a systematics classroom.
+For an example of the RevBayes RStudio interface, see the tutorial materials associated with this special issue.
+For further examples of setting up the command line interface or the Jupyter interface, we direct readers to the RevBayes installation instructions and introductory set-up tutorial.
+
+\bibliographystyle{sys}
+\bibliography{references}
 
 
 \end{document}
